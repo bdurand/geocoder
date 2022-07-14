@@ -120,7 +120,7 @@ module Geocoder
       def read_fixture(file)
         filepath = File.join("test", "fixtures", file)
         s = File.read(filepath).strip.gsub(/\n\s*/, "")
-        MockHttpResponse.new(body: s, code: "200")
+        Geocoder::Response.new(code: 200, body: s)
       end
 
       ##
@@ -151,7 +151,7 @@ module Geocoder
         raise Errno::ECONNREFUSED if query.text == "connection_refused"
         raise Errno::EHOSTUNREACH if query.text == "host_unreachable"
         if query.text == "invalid_json"
-          return MockHttpResponse.new(:body => 'invalid json', :code => 200)
+          return Geocoder::Response.new(code: 200, body: 'invalid json', headers: {'Content-Type' => 'application/json'})
         end
 
         read_fixture fixture_for_query(query)
@@ -165,7 +165,7 @@ module Geocoder
         if file == "bing_service_unavailable"
           filepath = File.join("test", "fixtures", file)
           s = File.read(filepath).strip.gsub(/\n\s*/, "")
-          MockHttpResponse.new(body: s, code: "200", headers: {'x-ms-bm-ws-info' => "1"})
+          Geocoder::Response.new(body: s, code: "200", headers: {'x-ms-bm-ws-info' => "1"})
         else
           super
         end
@@ -560,14 +560,14 @@ module Geocoder
         filepath = File.join("test", "fixtures", file)
         s = File.read(filepath).strip.gsub(/\n\s*/, "")
 
-        options = { body: s, code: 200 }
+        code = 200
         if file == "geoapify_invalid_request"
-          options[:code] = 500
+          code = 500
         elsif file == "geoapify_invalid_key"
-          options[:code] = 401
+          code = 401
         end
 
-        MockHttpResponse.new(options)
+        Geocoder::Response.new(code: code, body: s)
       end
     end
 
@@ -578,12 +578,12 @@ module Geocoder
         filepath = File.join("test", "fixtures", file)
         s = File.read(filepath).strip.gsub(/\n\s*/, "")
 
-        options = { body: s, code: 200 }
+        code = 200
         if file == "photon_invalid_request"
-          options[:code] = 400
+          code = 400
         end
 
-        MockHttpResponse.new(options)
+        Geocoder::Response.new(code: code, body: s)
       end
     end
   end
@@ -748,18 +748,5 @@ class GeocoderTestCase < Test::Unit::TestCase
       key = nil
     end
     Geocoder.configure(:api_key => key)
-  end
-end
-
-class MockHttpResponse
-  attr_reader :code, :body
-  def initialize(options = {})
-    @code = options[:code].to_s
-    @body = options[:body]
-    @headers = options[:headers] || {}
-  end
-
-  def [](key)
-    @headers[key]
   end
 end

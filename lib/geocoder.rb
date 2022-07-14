@@ -6,6 +6,8 @@ require "geocoder/calculations"
 require "geocoder/exceptions"
 require "geocoder/cache"
 require "geocoder/request"
+require "geocoder/response"
+require "geocoder/net_http_client"
 require "geocoder/lookup"
 require "geocoder/ip_address"
 require "geocoder/models/active_record" if defined?(::ActiveRecord)

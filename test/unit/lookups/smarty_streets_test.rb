@@ -89,7 +89,7 @@ class SmartyStreetsTest < GeocoderTestCase
     lookup = Geocoder::Lookup.get(:smarty_streets)
     error_statuses.each do |code, err|
       assert_raises err do
-        response = MockHttpResponse.new(code: code.to_i)
+        response = Geocoder::Response.new(code: code)
         lookup.send(:check_response_for_errors!, response)
       end
     end

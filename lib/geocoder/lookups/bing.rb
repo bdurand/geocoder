@@ -76,7 +76,7 @@ module Geocoder::Lookup
       # you would normally receive a result. To identify this situation,
       # check the HTTP headers of the response. If the HTTP header X-MS-BM-WS-INFO is set to 1,
       # it is best to wait a few seconds and try again.
-      response['x-ms-bm-ws-info'].to_i == 1
+      response.header('x-ms-bm-ws-info').to_i == 1
     end
   end
 end

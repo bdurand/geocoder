@@ -42,7 +42,7 @@ class IpdataCoTest < GeocoderTestCase
     Geocoder.configure(always_raise: [Geocoder::RequestDenied])
     lookup = Geocoder::Lookup.get(:ipdata_co)
       assert_raises Geocoder::RequestDenied do
-        response = MockHttpResponse.new(code: 403)
+        response = Geocoder::Response.new(code: 403)
         lookup.send(:check_response_for_errors!, response)
     end
   end

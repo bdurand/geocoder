@@ -9,33 +9,17 @@ module Geocoder::Lookup
     end
 
     def map_link_url(coordinates)
-      "http://maps.google.com/maps?q=#{coordinates.join(',')}"
+      "https://maps.google.com/maps?q=#{coordinates.join(',')}"
     end
 
     def supported_protocols
-      # Google requires HTTPS if an API key is used.
-      if configuration.api_key
-        [:https]
-      else
-        [:http, :https]
-      end
+      [:https]
     end
 
     private # ---------------------------------------------------------------
 
     def base_query_url(query)
       "#{protocol}://maps.googleapis.com/maps/api/geocode/json?"
-    end
-
-    def configure_ssl!(client)
-      client.instance_eval {
-        @ssl_context = OpenSSL::SSL::SSLContext.new
-        options = OpenSSL::SSL::OP_NO_SSLv2 | OpenSSL::SSL::OP_NO_SSLv3
-        if OpenSSL::SSL.const_defined?('OP_NO_COMPRESSION')
-          options |= OpenSSL::SSL::OP_NO_COMPRESSION
-        end
-        @ssl_context.set_params({options: options})
-      }
     end
 
     def valid_response?(response)
